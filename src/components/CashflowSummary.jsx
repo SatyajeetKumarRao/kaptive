@@ -1,15 +1,14 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 
 import {
   Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
   TableCaption,
   TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 
 const CashflowSummary = ({ data = [] }) => {
@@ -30,24 +29,47 @@ const CashflowSummary = ({ data = [] }) => {
 
   return (
     <Box id="cashFlowTable" bgColor={"white"} m={5} p={5} borderRadius={5}>
+      <Flex justify={"space-between"} my={5}>
+        <Box>
+          <Text fontSize={"2xl"} fontWeight={600}>
+            CashSummery - 1
+          </Text>
+        </Box>
+
+        <Flex gap={2}>
+          <Button>Decimal View</Button>
+          <Button>Percentage View</Button>
+        </Flex>
+      </Flex>
       <Box maxH="300px" overflowY="auto" borderWidth="1px" borderRadius="md">
         <TableContainer>
           <Table variant="simple">
-            <TableCaption>Imperial to metric conversion factors</TableCaption>
+            <TableCaption>{""}</TableCaption>
             <Thead>
               <Tr>
-                <Th>CashFlow</Th>
+                <Th maxW={"200px"} minW={"200px"} whiteSpace={"wrap"}>
+                  CashFlow
+                </Th>
                 {monthNames.map((month) => {
                   return <Th key={month}>{month}</Th>;
                 })}
               </Tr>
             </Thead>
             <Tbody>
-              {data.map((item) => {
+              {data.map((item, i) => {
                 return (
                   <Tr key={item.Overhead}>
                     {Object.keys(item).map((key) => {
-                      return <Td key={key}>{item[key]}</Td>;
+                      return (
+                        <Td
+                          key={key}
+                          maxW={i === 0 ? "200px" : ""}
+                          minW={i === 0 ? "200px" : ""}
+                          whiteSpace={"wrap"}
+                        >
+                          {item[key]}
+                        </Td>
+                      );
                     })}
                   </Tr>
                 );

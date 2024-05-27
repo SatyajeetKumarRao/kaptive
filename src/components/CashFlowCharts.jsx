@@ -112,7 +112,15 @@ const CashFlowCharts = ({ data = [] }) => {
           Revenue, COGS, and Gross Profit by Month
         </Heading>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={filteredData}>
+          <BarChart
+            data={filteredData}
+            margin={{
+              top: 10,
+              right: 10,
+              left: 50,
+              bottom: 10,
+            }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="month"
