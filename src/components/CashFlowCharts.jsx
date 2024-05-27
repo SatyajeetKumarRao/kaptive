@@ -1,5 +1,5 @@
-import { Box, Button, Flex, Heading, Select } from "@chakra-ui/react";
-import { useMemo } from "react";
+import { Box, Button, Flex, Heading, Select, useModal } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -56,27 +56,84 @@ const CashFlowCharts = ({ data = [] }) => {
         }
       });
 
-      // Add the computed values to the monthlyData array
       return {
         month,
-        revenue: revenue.toFixed(2),
-        cogs: cogs.toFixed(2),
-        grossProfit: grossProfit.toFixed(2),
+        revenue: revenue,
+        cogs: cogs,
+        grossProfit: grossProfit,
       };
     });
 
     return monthlyData;
   };
 
-  // Processed data
   const filteredData = useMemo(() => getMonthlyData(data), [data]);
 
-  // Customized label for XAxis
-  // const CustomizedLabel = ({ x, y, value }) => (
-  //   <Text x={x} y={y} dy={-5} fontSize="10px" textAnchor="middle">
-  //     {value}
-  //   </Text>
-  // );
+  const [timePeriod, setTimePeriod] = useState("monthly");
+
+  const getQuarterlyData = () => {
+    const quarterlyData = [];
+
+    for (let i = 0; i < 4; i++) {
+      let start = i * 3;
+      let end = start + 3;
+
+      const quarterRawData = filteredData.slice(start, end);
+
+      let revenue = 0;
+      let cogs = 0;
+      let grossProfit = 0;
+
+      quarterRawData.forEach((data) => {
+        revenue += data.revenue;
+        cogs += data.cogs;
+        grossProfit += data.grossProfit;
+      });
+
+      quarterlyData.push({
+        month: "Quarter" + (i + 1),
+        revenue: revenue,
+        cogs: cogs,
+        grossProfit: grossProfit,
+      });
+    }
+
+    return quarterlyData;
+  };
+
+  const filteredQuarterlyData = useMemo(() => getQuarterlyData(), [data]);
+
+  const gatHalfYearlyData = () => {
+    const halfYearlyData = [];
+
+    for (let i = 0; i < 2; i++) {
+      let start = i * 6;
+      let end = start + 6;
+
+      const halfYearlyRawData = filteredData.slice(start, end);
+
+      let revenue = 0;
+      let cogs = 0;
+      let grossProfit = 0;
+
+      halfYearlyRawData.forEach((data) => {
+        revenue += data.revenue;
+        cogs += data.cogs;
+        grossProfit += data.grossProfit;
+      });
+
+      halfYearlyData.push({
+        month: "Half Year" + (i + 1),
+        revenue: revenue,
+        cogs: cogs,
+        grossProfit: grossProfit,
+      });
+    }
+
+    return halfYearlyData;
+  };
+
+  const filteredHalfYearlyData = useMemo(() => gatHalfYearlyData(), [data]);
 
   return (
     <Box
@@ -106,9 +163,15 @@ const CashFlowCharts = ({ data = [] }) => {
             </Select>
           </Box>
           <Box>
-            <Select placeholder="Select Term">
-              <option value="monthly">Monthly </option>
+            <Select
+              value={timePeriod}
+              onChange={(e) => {
+                setTimePeriod(e.target.value);
+              }}
+            >
+              <option value="monthly">Monthly</option>
               <option value="quarterly">Quarterly</option>
+              <option value="halfYearly">Half Yearly</option>
             </Select>
           </Box>
         </Flex>
@@ -127,7 +190,13 @@ const CashFlowCharts = ({ data = [] }) => {
           </Heading>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={filteredData}
+              data={
+                timePeriod == "monthly"
+                  ? filteredData
+                  : timePeriod == "quarterly"
+                  ? filteredQuarterlyData
+                  : filteredHalfYearlyData
+              }
               margin={{
                 top: 10,
                 right: 10,
