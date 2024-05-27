@@ -7,6 +7,7 @@ import {
   Flex,
   Icon,
   IconButton,
+  Link,
   Text,
   useColorModeValue,
   useDisclosure,
@@ -14,27 +15,29 @@ import {
 
 import bgImage from "../assets/bg.jpg";
 
-import { NavLink } from "react-router-dom";
-
 import { BiSolidBinoculars, BiSolidReport } from "react-icons/bi";
 import { FaChartSimple } from "react-icons/fa6";
 import { LuTable2 } from "react-icons/lu";
 
 import { FiMenu } from "react-icons/fi";
 
+import { useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 
 const LinkItems = [
-  { name: "Charts", icon: FaChartSimple, path: "/charts" },
-  { name: "Tables", icon: LuTable2, path: "/tables" },
-  { name: "Reports", icon: BiSolidReport, path: "/reports" },
-  { name: "Forecast", icon: BiSolidBinoculars, path: "/forecast" },
+  { name: "Charts", icon: FaChartSimple, path: "#cashFlowChart" },
+  { name: "Tables", icon: LuTable2, path: "#cashFlowSummary" },
+  { name: "Reports", icon: BiSolidReport, path: "#reports" },
+  { name: "Forecast", icon: BiSolidBinoculars, path: "#forecast" },
   // { name: "Settings", icon: FiSettings },
 ];
 
 export default function SimpleSidebar({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [selectedLink, setSelectedLink] = useState("Charts"); // State to track selected link
+
   return (
     <Box
       minH="100vh"
@@ -46,6 +49,8 @@ export default function SimpleSidebar({ children }) {
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
+        selectedLink={selectedLink} // Pass selected link state
+        setSelectedLink={setSelectedLink} // Pass state updater function
       />
       <Drawer
         autoFocus={false}
@@ -57,7 +62,11 @@ export default function SimpleSidebar({ children }) {
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent
+            onClose={onClose}
+            selectedLink={selectedLink} // Pass selected link state
+            setSelectedLink={setSelectedLink} // Pass state updater function
+          />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -69,7 +78,7 @@ export default function SimpleSidebar({ children }) {
   );
 }
 
-function SidebarContent({ onClose, ...rest }) {
+function SidebarContent({ onClose, selectedLink, setSelectedLink, ...rest }) {
   return (
     <Box
       bg={useColorModeValue("#0005ff96", "gray.900")}
@@ -93,14 +102,16 @@ function SidebarContent({ onClose, ...rest }) {
             mx="8"
             justifyContent="space-between"
           >
-            <Text
-              fontSize="2xl"
-              fontFamily="monospace"
-              fontWeight="bold"
-              color={"white"}
-            >
-              Dashboard
-            </Text>
+            <Link href="/">
+              <Text
+                fontSize="2xl"
+                fontFamily="monospace"
+                fontWeight="bold"
+                color={"white"}
+              >
+                Dashboard
+              </Text>
+            </Link>
             <CloseButton
               display={{ base: "flex", md: "none" }}
               onClick={onClose}
@@ -108,7 +119,13 @@ function SidebarContent({ onClose, ...rest }) {
             />
           </Flex>
           {LinkItems.map((link) => (
-            <NavItem key={link.name} icon={link.icon} path={link.path}>
+            <NavItem
+              key={link.name}
+              icon={link.icon}
+              path={link.path}
+              isActive={selectedLink === link.name} // Check if the link is active
+              onClick={() => setSelectedLink(link.name)} // Update selected link on click
+            >
               {link.name}
             </NavItem>
           ))}
@@ -186,39 +203,39 @@ function SidebarContent({ onClose, ...rest }) {
   );
 }
 
-function NavItem({ icon, children, path, ...rest }) {
+function NavItem({ icon, children, path, isActive, onClick, ...rest }) {
   return (
-    <NavLink to={path}>
-      {({ isActive }) => (
-        <Flex
-          align="center"
-          p="4"
-          mx="4"
-          borderRadius="lg"
-          role="group"
-          cursor="pointer"
-          color="white"
-          bg={isActive ? "#ffffff4d" : "transparent"}
-          _hover={{
-            bg: "#ffffff4d",
-            color: "white",
-          }}
-          {...rest}
-        >
-          {icon && (
-            <Icon
-              mr="4"
-              fontSize="16"
-              _groupHover={{
-                color: "white",
-              }}
-              as={icon}
-            />
-          )}
-          {children}
-        </Flex>
-      )}
-    </NavLink>
+    <Link href={path} onClick={onClick}>
+      {/* {({ isActive }) => ( */}
+      <Flex
+        align="center"
+        p="4"
+        mx="4"
+        borderRadius="lg"
+        role="group"
+        cursor="pointer"
+        color="white"
+        bg={isActive ? "#ffffff4d" : "transparent"}
+        _hover={{
+          bg: "#ffffff4d",
+          color: "white",
+        }}
+        {...rest}
+      >
+        {icon && (
+          <Icon
+            mr="4"
+            fontSize="16"
+            _groupHover={{
+              color: "white",
+            }}
+            as={icon}
+          />
+        )}
+        {children}
+      </Flex>
+      {/* )} */}
+    </Link>
   );
 }
 
@@ -227,6 +244,9 @@ function MobileNav({ onOpen, ...rest }) {
     <Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 24 }}
+      top={0}
+      position={"sticky"}
+      zIndex={2}
       height="20"
       alignItems="center"
       bg={useColorModeValue("white", "gray.900")}
