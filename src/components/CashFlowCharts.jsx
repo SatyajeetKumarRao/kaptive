@@ -28,13 +28,11 @@ const CashFlowCharts = ({ data = [] }) => {
       "December",
     ];
 
-    // Iterate through months to compute Revenue, COGS, and Gross Profit for each month
     const monthlyData = months.map((month) => {
       let revenue = 0;
       let cogs = 0;
       let grossProfit = 0;
 
-      // Accumulate values for each category (Revenue, COGS, Gross Profit) for the current month
       data.forEach((row) => {
         if (
           row.Overhead === "Accrued Revenue" ||

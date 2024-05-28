@@ -19,19 +19,17 @@ const CashflowSummary = ({ data = [] }) => {
   const [currency, setCurrency] = useState("rupees");
 
   const calculatePercentages = (obj) => {
-    // Calculate the sum of all values in the object
     const sum = Object.values(obj).reduce((acc, value) => {
       if (!isNaN(value)) {
         return acc + value;
       } else return acc;
     }, 0);
 
-    // Calculate the percentage for each key
     const percentages = {};
     for (const key of Object.keys(obj)) {
       percentages[key] = !isNaN(obj[key])
         ? ((obj[key] / sum) * 100).toFixed(2)
-        : obj[key]; // toFixed(2) for 2 decimal places
+        : obj[key];
     }
 
     return percentages;
