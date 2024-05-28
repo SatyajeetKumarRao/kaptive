@@ -66,6 +66,10 @@ npm run dev
 
 ### Snapshot of Website
 
+![Screenshot 2024-05-28 092501](https://github.com/SatyajeetKumarRao/kaptive/assets/67307315/99fc54b7-da34-41fe-be34-4ba17a5f740d)
+
+
+
 ## Technology Stack
 
 List and provide a brief overview of the technologies used in the project.
